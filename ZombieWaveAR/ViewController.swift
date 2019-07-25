@@ -15,19 +15,25 @@ import AVFoundation
 class ViewController: UIViewController, ARSCNViewDelegate,ARSessionDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
+ 
     
+///Set Up Scene
     var trackerNode: SCNNode!
     var Gamestarted = false
     var foundaSurface = false
     var trackingForArenaPosition = SCNVector3Make(0.0, 0.0, 0.0)
     
-    
+///Maps
    var arenaNode: SCNNode!
+
+///Characters
+    var soldierNode: SCNNode!
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
 //        constraints()
-let scene = SCNScene(named: "art.scnassets/CityStreet/untitled.dae")!
+let scene = SCNScene(named: "art.scnassets/CityStreet/aCityStreet.scn")!
         sceneView.scene = scene
         sceneView.delegate = self
     }
@@ -52,21 +58,35 @@ let scene = SCNScene(named: "art.scnassets/CityStreet/untitled.dae")!
             
         } else {
             
+            
+            let soldierScene = SCNScene(named: "art.scnassets/Soldier/Firing Rifle.scn")!
+            ///SceneWith Animation
+            
+            
+            
+            
+            
             guard let safeUnwrap = trackerNode else {return}
-            
             safeUnwrap.removeFromParentNode()
-            
             Gamestarted = true
             
+            
             guard let arena = sceneView.scene.rootNode.childNode(withName: "rua", recursively: false) else {return}
-            
             arenaNode = arena
-            
             arenaNode.position = SCNVector3Make(trackingForArenaPosition.x, trackingForArenaPosition.y, trackingForArenaPosition.z)
-            
-//            arenaNode.scale = SCNVector3(0.025,0.025,0.025)
+            let arenaRotate = SCNAction.rotateBy(x: 0, y: -90, z: 0, duration: 0)
+            arena.runAction(arenaRotate)
+            arenaNode.scale = SCNVector3(0.01,0.008,0.01)
             sceneView.scene.rootNode.addChildNode(arenaNode)
             arenaNode.isHidden = false
+            
+            
+            soldierNode = soldierScene.rootNode
+            soldierNode.position = SCNVector3Make(trackingForArenaPosition.x, trackingForArenaPosition.y, trackingForArenaPosition.z)
+            soldierNode.scale = SCNVector3(0.0004,0.0004,0.0004)
+            soldierNode.isPaused = true
+            sceneView.scene.rootNode.addChildNode(soldierNode)
+
         }
     }
     
